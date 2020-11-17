@@ -27,7 +27,7 @@
                     >
                         <a-icon type="key" slot="prefix" />
                     </a-input>
-                    <a-button type="primary"> 登录 </a-button>
+                    <a-button type="primary"> 登录1 </a-button>
                 </div>
             </div>
         </a-card>
