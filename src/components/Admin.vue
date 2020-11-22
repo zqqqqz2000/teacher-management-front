@@ -27,10 +27,13 @@
                     >
                         <a-icon type="key" slot="prefix" />
                     </a-input>
-                    <a-button type="primary"> 登录 </a-button>
+                    <a-button type="primary" @click="login()"> 登录 </a-button>
                 </div>
             </div>
         </a-card>
+        <a-modal :title="title" v-model="visible" @ok="hideModal">
+            <p>{{ text }}</p>
+        </a-modal>
     </div>
 </template>
 
@@ -40,10 +43,78 @@ export default {
     name: "Admin",
     data: function () {
         return {
-            current: "teacher",
+            current: ["teacher"],
             userName: "",
             passWord: "",
+            visible: false,
+            text: "",
+            title: "",
         };
+    },
+    methods: {
+        login: function () {
+            if (this.current == "hr") {
+                this.$axios({
+                    url: "http://127.0.0.1:5000/hrlogin",
+                    method: "post",
+                    data: {
+                        username: this.userName,
+                        password: this.passWord,
+                    },
+                }).then((response) => {
+                    let data = response.data;
+                    if (data.success) {
+                        this.$cookies.set("token", data.token);
+                        this.$router.push("/hr-management/teacher");
+                    } else {
+                        this.title = "登录失败";
+                        this.text = data.info;
+                        this.visible = true;
+                    }
+                });
+            } else if (this.current == "fancy") {
+                this.$axios({
+                    url: "http://127.0.0.1:5000/finance_login",
+                    method: "post",
+                    data: {
+                        username: this.userName,
+                        password: this.passWord,
+                    },
+                }).then((response) => {
+                    let data = response.data;
+                    if (data.success) {
+                        this.$cookies.set("token", data.token);
+                        this.$router.push("/finance-management");
+                    } else {
+                        this.title = "登录失败";
+                        this.text = data.info;
+                        this.visible = true;
+                    }
+                });
+            } else if (this.current == "teacher") {
+                this.$axios({
+                    url: "http://127.0.0.1:5000/teacher_login",
+                    method: "post",
+                    data: {
+                        username: this.userName,
+                        password: this.passWord,
+                    },
+                }).then((response) => {
+                    let data = response.data;
+                    if (data.success) {
+                        this.$cookies.set("token", data.token);
+                        this.$router.push("/teacher-management");
+                    } else {
+                        this.title = "登录失败";
+                        this.text = data.info;
+                        this.visible = true;
+                    }
+                });
+            }
+        },
+        hideModal() {
+            this.visible = false;
+        },
     },
 };
 </script>
